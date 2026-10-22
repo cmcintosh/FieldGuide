@@ -47,7 +47,11 @@ python3 app.py serve --endpoint http://127.0.0.1:8081/v1/chat/completions --mode
 
 Record/pin the model hash and runtime commit after testing. New model formats can require updated llama.cpp versions. Short contexts and one generation at a time are starting configurations, not measured performance guarantees.
 
-## Android Termux preview
+## Android knowledge app (Termux) and native nearby companion
+
+For native Bluetooth/Wi-Fi Direct/hotspot exchange, build/install the separate app described in [android/README.md](../android/README.md). Its Actions artifact contains a debug APK. The following Termux setup runs the knowledge/maps application; the companion does not yet embed it.
+
+### Termux setup
 
 This is not a native APK. Install a supported Termux build from its [official installation instructions](https://github.com/termux/termux-app#installation). Use an ARM64 device and store the checkout, databases and model inside Termux's private home directory. For the 2B candidate start with an 8 GB device; validate real memory and thermal behavior.
 

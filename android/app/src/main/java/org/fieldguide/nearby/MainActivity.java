@@ -131,7 +131,7 @@ public final class MainActivity extends Activity {
             try(InputStream stream=getAssets().open("LICENSE")){new AlertDialog.Builder(this).setTitle("FieldGuide · GPL-2.0-only · No warranty").setMessage(new String(readLimited(stream),StandardCharsets.UTF_8)).setPositiveButton("Close",null).show();}
             catch(IOException error){report(error.getMessage());}
         });
-        files.execute(()->{
+        fileTask(()->{
             try {
                 File previous=new File(getFilesDir(),"outgoing.json");
                 if(previous.exists())try(InputStream stream=new FileInputStream(previous)){byte[] data=readLimited(stream);String summary=BundleValidator.validate(data);ui(()->{outgoing=data;outgoingSummary.setText(summary);});}
@@ -141,6 +141,11 @@ public final class MainActivity extends Activity {
         });
     }
     private void ui(Runnable action) { runOnUiThread(()->{if(!isFinishing()&&!isDestroyed())action.run();}); }
+    private void fileTask(Runnable action) {
+        if(isFinishing()||isDestroyed()||files.isShutdown())return;
+        try { files.execute(()->{try{action.run();}catch(RuntimeException error){report("File operation stopped: "+error.getMessage());}}); }
+        catch(java.util.concurrent.RejectedExecutionException ignored) { /* Activity is closing. */ }
+    }
     private void report(String value) { ui(()->status.setText(value)); }
     private TextView text(LinearLayout layout,String value) { TextView view=new TextView(this);view.setText(value);view.setPadding(0,10,0,10);layout.addView(view);return view; }
     private void heading(LinearLayout layout,String value) { TextView view=text(layout,value);view.setTextSize(22); }
@@ -154,15 +159,18 @@ public final class MainActivity extends Activity {
     private void bluetoothAction(boolean scan,boolean advertise,Runnable action) {
         ArrayList<String> needed=new ArrayList<>();
         if(Build.VERSION.SDK_INT>=31){needed.add(Manifest.permission.BLUETOOTH_CONNECT);if(scan)needed.add(Manifest.permission.BLUETOOTH_SCAN);if(advertise)needed.add(Manifest.permission.BLUETOOTH_ADVERTISE);}
-        else if(scan)needed.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        else if(scan){needed.add(Manifest.permission.ACCESS_FINE_LOCATION);needed.add(Manifest.permission.ACCESS_COARSE_LOCATION);}
         permissionAction(needed,action);
     }
     private void wifiAction(Runnable action) {
-        ArrayList<String> needed=new ArrayList<>();needed.add(Build.VERSION.SDK_INT>=33?Manifest.permission.NEARBY_WIFI_DEVICES:Manifest.permission.ACCESS_FINE_LOCATION);permissionAction(needed,action);
+        ArrayList<String> needed=new ArrayList<>();
+        if(Build.VERSION.SDK_INT>=33)needed.add(Manifest.permission.NEARBY_WIFI_DEVICES);
+        else {needed.add(Manifest.permission.ACCESS_FINE_LOCATION);needed.add(Manifest.permission.ACCESS_COARSE_LOCATION);}
+        permissionAction(needed,action);
     }
     private void permissionAction(ArrayList<String> needed,Runnable action) {
-        needed.removeIf(permission->checkSelfPermission(permission)==PackageManager.PERMISSION_GRANTED);
-        if(needed.isEmpty()){action.run();return;}
+        boolean allGranted=true;for(String permission:needed)allGranted&=checkSelfPermission(permission)==PackageManager.PERMISSION_GRANTED;
+        if(allGranted){action.run();return;}
         pendingPermissionAction=action;requestPermissions(needed.toArray(new String[0]),PERMISSIONS);
     }
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results) {
@@ -170,7 +178,7 @@ public final class MainActivity extends Activity {
         if(request!=PERMISSIONS)return;Runnable action=pendingPermissionAction;pendingPermissionAction=null;
         boolean granted=results.length>0;for(int result:results)granted&=result==PackageManager.PERMISSION_GRANTED;
         if(granted&&action!=null){try{action.run();}catch(RuntimeException error){report(error.getMessage());}}
-        else report("Permission denied. You can retry the action when ready.");
+        else report("Nearby or legacy location permission denied. No connection was started; retry when ready.");
     }
     private void compose() {
         if(title.getText().toString().trim().isEmpty()||message.getText().toString().trim().isEmpty()){report("Enter a title and message.");return;}
@@ -182,14 +190,14 @@ public final class MainActivity extends Activity {
         }catch(Exception error){report("Could not create message: "+error.getMessage());}
     }
     private void loadOutgoing(byte[] data) {
-        files.execute(()->{
+        fileTask(()->{
             try {String summary=BundleValidator.validate(data);savePrivate("outgoing.json",data);ui(()->{outgoing=data;outgoingSummary.setText(summary);report("Outgoing bundle ready. Choose a peer to send it.");});}
             catch(IOException error){report(error.getMessage());}
         });
     }
     private void accept() {
         if(pending==null)return;byte[] data=pending.clone();
-        files.execute(()->{try{BundleValidator.validate(data);savePrivate("received.json",data);ui(()->{accepted=data;pending=null;acceptButton.setEnabled(false);rejectButton.setEnabled(false);exportButton.setEnabled(true);report("Received bundle accepted to private app storage. Export it to import into the main library.");});}catch(IOException error){report(error.getMessage());}});
+        fileTask(()->{try{BundleValidator.validate(data);savePrivate("received.json",data);ui(()->{accepted=data;pending=null;acceptButton.setEnabled(false);rejectButton.setEnabled(false);exportButton.setEnabled(true);report("Received bundle accepted to private app storage. Export it to import into the main library.");});}catch(IOException error){report(error.getMessage());}});
     }
     private void savePrivate(String name,byte[] data) throws IOException {
         File temporary=new File(getFilesDir(),name+".tmp");
@@ -203,8 +211,8 @@ public final class MainActivity extends Activity {
     }
     @Override protected void onActivityResult(int request,int result,Intent intent) {
         super.onActivityResult(request,result,intent);if(result!=RESULT_OK||intent==null||intent.getData()==null)return;Uri uri=intent.getData();
-        if(request==OPEN)files.execute(()->{try(InputStream stream=getContentResolver().openInputStream(uri)){loadOutgoing(readLimited(stream));}catch(IOException error){report(error.getMessage());}});
-        else if(request==SAVE && accepted!=null){byte[] data=accepted.clone();files.execute(()->{try(OutputStream stream=getContentResolver().openOutputStream(uri,"w")){if(stream==null)throw new IOException("Cannot open destination");stream.write(data);report("Accepted bundle exported. Import it with the Python app's Nearby sharing tab.");}catch(IOException error){report(error.getMessage());}});}
+        if(request==OPEN)fileTask(()->{try(InputStream stream=getContentResolver().openInputStream(uri)){loadOutgoing(readLimited(stream));}catch(IOException error){report(error.getMessage());}});
+        else if(request==SAVE && accepted!=null){byte[] data=accepted.clone();fileTask(()->{try(OutputStream stream=getContentResolver().openOutputStream(uri,"w")){if(stream==null)throw new IOException("Cannot open destination");stream.write(data);report("Accepted bundle exported. Import it with the Python app's Nearby sharing tab.");}catch(IOException error){report(error.getMessage());}});}
     }
     private void addBluetooth(BluetoothDevice device) {
         try {String key=device.getAddress();if(!bluetoothSeen.add(key))return;String name=device.getName();
