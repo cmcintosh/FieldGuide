@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: GPL-2.0-only
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'org.fieldguide.nearby'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'org.fieldguide.nearby'
+        minSdk 26
+        targetSdk 36
+        versionCode 3
+        versionName '0.3.0-dev'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    lint { abortOnError true }
+}

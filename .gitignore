@@ -14,3 +14,7 @@ models/
 *.wav
 .DS_Store
 node_modules/
+
+.gradle/
+local.properties
+*.apk

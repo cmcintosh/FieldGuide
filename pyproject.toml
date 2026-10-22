@@ -16,6 +16,7 @@ dependencies = []
 [project.scripts]
 fieldguide = "fieldguide.server:main"
 fieldguide-audio = "fieldguide.audio:main"
+fieldguide-link = "fieldguide.link:main"
 
 [project.urls]
 Repository = "https://github.com/cmcintosh/FieldGuide"
