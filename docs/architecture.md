@@ -11,6 +11,8 @@ FieldGuide is an original GPL-2.0-only project, inspired by the offline knowledg
 | `src/fieldguide/maps.py` | Read-only raster MBTiles metadata/tiles and TMS conversion |
 | `src/fieldguide/peer.py` | Selected bundles, short-lived offers, integrity checks, idempotent merge and waypoint validation |
 | `src/fieldguide/audio.py` | Experimental framed FSK WAV encoding/decoding |
+| `src/fieldguide/link.py` | Bounded FGT1 stream framing and one-shot TCP bridge |
+| `android/` | Native nearby companion: radio discovery, links, bundle review and file handoff |
 | `src/fieldguide/static` | Local HTML/CSS/JavaScript; no CDN assets |
 | `tests` | Storage, HTTP, maps, peer and synthesized-audio verification |
 | `examples` | Original demonstration documents |
@@ -50,3 +52,7 @@ The original codec offers explicit short-text WAV generation and decoding, with 
 6. Add vector maps, POIs/GPX, education and appliance installation/updates. Scope navigation separately.
 
 All runtime assets must work after disconnecting and rebooting. Content/model/map licensing is independent of the project's GPLv2 source license. See the wiki for protocols, limits and primary references.
+
+## Native transport companion update
+
+The Android companion implements secure RFCOMM sockets, Wi-Fi Direct peer/group control and local-only hotspot requests. One operation at a time owns bounded sockets; cancellation closes blocking resources. Files use the same selected-share JSON envelope with independent FGT1 framing. Runtime permission denial is handled in the Activity. Incoming content needs explicit review/acceptance. This is not yet a complete native RAG/maps app, a mesh or a background service. See `android/README.md` for the integration boundary and hardware validation requirements.

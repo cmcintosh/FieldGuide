@@ -2,7 +2,7 @@
 
 FieldGuide's original project code and original example documents are GPL-2.0-only. The full license is in `LICENSE`; source files carry SPDX identifiers. The earlier standalone prototype was offered under MIT; this repository is the GPLv2 project requested by its owner.
 
-The running Python application currently uses the standard library only. No Project NOMAD, llama.cpp, ggwave, MapLibre, model weights or geographic datasets are bundled here.
+The running Python application currently uses the standard library only. The Android companion uses platform framework APIs and includes no AndroidX or other third-party application runtime libraries; Gradle and the Android build plugin are separate build tools. No Project NOMAD, llama.cpp, ggwave, MapLibre, model weights or geographic datasets are bundled here.
 
 Optional external components retain their own licenses:
 

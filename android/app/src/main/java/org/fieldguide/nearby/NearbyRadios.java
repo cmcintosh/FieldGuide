@@ -46,7 +46,10 @@ public final class NearbyRadios implements Closeable {
         bluetooth=manager==null?null:manager.getAdapter();
         wifi=context.getApplicationContext().getSystemService(WifiManager.class);
         p2p=context.getSystemService(WifiP2pManager.class);
-        if(p2p!=null) channel=p2p.initialize(context,Looper.getMainLooper(),()->listener.event("Wi-Fi Direct channel closed; reopen this screen."));
+        if(p2p!=null && context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_WIFI_DIRECT)) {
+            try { channel=p2p.initialize(context,Looper.getMainLooper(),()->listener.event("Wi-Fi Direct channel closed; reopen this screen.")); }
+            catch(RuntimeException error) { listener.event("Wi-Fi Direct initialization failed: "+error.getMessage()); }
+        }
         IntentFilter filter=new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         filter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);filter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);

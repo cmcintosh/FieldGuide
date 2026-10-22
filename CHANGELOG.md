@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 development — 2026-10-22
+
+- Add native Android nearby companion with Bluetooth RFCOMM, Wi-Fi Direct, hotspot control and explicit bundle review.
+- Add shared FGT1 framing and Python TCP bridge for Android/Pi/laptop exchange.
+- Add cross-language golden vectors and Android build/lint/APK artifact CI.
+- Native radio hardware validation and full native RAG/maps integration remain pending.
+
 ## 0.2.0 — 2026-10-22
 
 - Establish FieldGuide as a GPL-2.0-only Python package with tests, CI and versioned wiki documentation.

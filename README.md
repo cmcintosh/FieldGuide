@@ -2,7 +2,7 @@
 
 An offline knowledge and preparedness toolkit for laptops, Raspberry Pi and Android development environments. Search local references, ask a separately installed local model, view installed offline maps, and exchange explicitly selected records with another device.
 
-**Development preview 0.2 · GPL-2.0-only · Python 3.10+ · no Python runtime dependencies**
+**Development preview 0.3 · GPL-2.0-only · Python 3.10+ · no Python runtime dependencies**
 
 ## Current capabilities
 
@@ -10,11 +10,11 @@ An offline knowledge and preparedness toolkit for laptops, Raspberry Pi and Andr
 |---|---|---|
 | Knowledge and RAG | Text/Markdown/JSONL import, SQLite BM25 retrieval, original sources, local model adapter | Model weights separate; no embeddings/PDF/ZIM ingestion yet |
 | Offline maps | Local raster MBTiles, pan/zoom, attribution, saved waypoints, browser location request | Map files separate; no vector PMTiles/PBF rendering, geocoding or routing |
-| Local peer exchange | Selected documents/waypoints, 15-minute share codes, checksums, repeat-safe imports | Existing Wi-Fi/hotspot required; no automatic discovery, Bluetooth sockets or mesh |
+| Local peer exchange | Python HTTP shares plus a native Android Bluetooth/Wi-Fi Direct/hotspot companion and TCP bridge | Native radios require device validation; no BLE/mesh or background service |
 | Audio experiment | Explicit WAV encoding/playback and WAV decoding; 20.5/21.5 kHz or audible test tones | Short text, 160 UTF-8 bytes; no live microphone capture or proven hardware link |
 | Household records | Add supply entries, entered-calorie totals, notes, backup/restore | No full consumption/nutrition planner or encrypted storage |
 
-This is original software inspired by the offline knowledge use case. It is not a Project NOMAD fork and includes no NOMAD code, third-party content packs or model weights. A native Android APK is a later milestone; the current phone setup uses Termux and its local browser.
+This is original software inspired by the offline knowledge use case. It is not a Project NOMAD fork and includes no NOMAD code, third-party content packs or model weights. The knowledge/maps app currently uses Termux on Android. A separate native **FieldGuide Nearby** companion now exchanges selected records over Bluetooth, Wi-Fi Direct and local Wi-Fi; it does not yet embed the LLM/maps UI. See [Android setup and APK builds](android/README.md).
 
 ## Quick start
 
@@ -58,6 +58,8 @@ Start with the [versioned wiki pages](docs/wiki/Home.md), [installation guide](d
 
 - [Offline maps](docs/wiki/Offline-Maps.md)
 - [Peer-to-peer exchange and Android transports](docs/wiki/Peer-to-Peer.md)
+- [Native Android companion and APK](android/README.md)
+- [Shared Bluetooth/TCP protocol](docs/transport-protocol.md)
 - [Experimental acoustic transfer](docs/wiki/Acoustic-Transport.md)
 - [RAG and models](docs/wiki/RAG-and-Models.md)
 - [Hardware validation](docs/wiki/Hardware-Testing.md)

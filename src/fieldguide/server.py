@@ -20,7 +20,7 @@ MAX_BODY = 8 * 1024 * 1024
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "FieldGuide/0.2"
+    server_version = "FieldGuide/0.3"
 
     def log_message(self, format, *args):
         # Do not log searches or document text.
@@ -70,7 +70,7 @@ class Handler(BaseHTTPRequestHandler):
                 mime = {"index.html": "text/html; charset=utf-8", "app.js": "text/javascript; charset=utf-8", "style.css": "text/css; charset=utf-8", "map.js":"text/javascript; charset=utf-8", "LICENSE.txt":"text/plain; charset=utf-8"}[filename]
                 return self.send(200, (ROOT / "static" / filename).read_bytes(), mime)
             if url.path == "/api/status":
-                return self.send(200, {**core.stats(self.server.db), "ai_enabled": bool(self.server.endpoint), "model": self.server.model, "version": "0.2.0", 'sharing_enabled':self.server.lan})
+                return self.send(200, {**core.stats(self.server.db), "ai_enabled": bool(self.server.endpoint), "model": self.server.model, "version": "0.3.0", 'sharing_enabled':self.server.lan})
             if url.path == '/api/maps':
                 return self.send(200, [m.info(i) for i,m in enumerate(self.server.maps)])
             if url.path.startswith('/api/tiles/'):

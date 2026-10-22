@@ -16,16 +16,18 @@ The development transport is plain HTTP with a bearer code. A checksum detects c
 
 Export selected records as a JSON file, transfer it using the operating system's file-sharing facility (Bluetooth where available), and use Import shared file on the receiver. That is file transfer outside FieldGuide, not an in-app Bluetooth socket connection.
 
-## Native Android transport plan
+## Native Android companion status
 
 | Transport | Intended role | Current status |
 |---|---|---|
-| Wi-Fi Direct | Direct Android links without a router; group owner topology | Not implemented |
-| Local-only hotspot | Share with nearby Android/Pi/laptops without internet | OS setup only; app control planned |
-| Bluetooth Classic RFCOMM | Small messages and selected records | Not implemented |
+| Wi-Fi Direct | Direct Android links without a router; group owner topology | Native discovery/group/connection code and TCP transfer implemented; hardware validation pending |
+| Local-only hotspot | Share with nearby Android/Pi/laptops without internet | Native creation/credentials/stop implemented; joining through OS settings |
+| Bluetooth Classic RFCOMM | Small messages and selected records | Native discovery, paired sockets and one-shot selected-bundle transfer implemented; hardware validation pending |
 | BLE | Optional discovery/pairing metadata | Not implemented; avoid large pack transfers |
 | Acoustic | Small explicit text payloads; potential pairing hints | Experimental WAV codec; see acoustic page |
 
 Use Android's native APIs with runtime permissions and lifecycle handling. Wi-Fi Direct groups are not a general multi-hop mesh. A shared transfer envelope should sit above each transport, with chunking, resumability, authentication and recipient confirmation. Large maps/models belong on Wi-Fi; short messages and pairing data are better audio/Bluetooth candidates.
 
 Primary references: [Wi-Fi Direct](https://developer.android.com/develop/connectivity/wifi/wifip2p), [Bluetooth data](https://developer.android.com/develop/connectivity/bluetooth/transfer-data), [local-only hotspot](https://developer.android.com/develop/connectivity/wifi/localonlyhotspot).
+
+The [native companion guide](Native-Android.md) covers the app and debug APK. Its FGT1 stream protocol on port 43721 is distinct from the HTTP/share-code workflow on port 8765. Full native LLM/maps integration is still planned.

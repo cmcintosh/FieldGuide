@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fieldguide-offline"
-version = "0.2.0"
+version = "0.3.0"
 description = "Offline knowledge, local RAG, maps, and explicit peer data exchange"
 readme = "README.md"
 requires-python = ">=3.10"

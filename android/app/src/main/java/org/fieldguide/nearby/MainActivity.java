@@ -65,8 +65,8 @@ public final class MainActivity extends Activity {
         status=text(layout,"Choose a selected-share file or compose a field message.");status.setTextIsSelectable(true);
         transfers=new NearbyTransfers(new NearbyTransfers.Listener() {
             public void event(String value) { report(value); }
-            public void received(byte[] data,String summary) { ui(()->{
-                pending=data;incomingSummary.setText("Received for review: "+summary+"\n\n"+new String(data,StandardCharsets.UTF_8).substring(0,Math.min(new String(data,StandardCharsets.UTF_8).length(),1800)));
+            public void received(byte[] data,String summary) { String text=new String(data,StandardCharsets.UTF_8);String preview=text.substring(0,Math.min(text.length(),1800));ui(()->{
+                pending=data;incomingSummary.setText("Received for review: "+summary+"\n\n"+preview);
                 acceptButton.setEnabled(true);rejectButton.setEnabled(true);report("Frame verified. Review before accepting; nothing was imported.");
             }); }
         });
@@ -84,7 +84,7 @@ public final class MainActivity extends Activity {
 
         heading(layout,"1 · Choose what to send");
         outgoingSummary=text(layout,"No outgoing selected-share file loaded.");
-        button(layout,"Open selected-share JSON",()->{Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT);intent.setType("application/json");intent.addCategory(Intent.CATEGORY_OPENABLE);startActivityForResult(intent,OPEN);});
+        button(layout,"Open selected-share JSON",()->{Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT);intent.setType("*/*");intent.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{"application/json","text/plain","application/octet-stream"});intent.addCategory(Intent.CATEGORY_OPENABLE);startActivityForResult(intent,OPEN);});
         title=input(layout,"Message title",false);message=input(layout,"Short field message",true);
         button(layout,"Use message as outgoing document",this::compose);
 
@@ -219,5 +219,5 @@ public final class MainActivity extends Activity {
         catch(Exception error){return "Check Android Wi-Fi settings for the local IP address.";}
         return values.isEmpty()?"No private IPv4 interface yet.":String.join("; ",values);
     }
-    @Override protected void onDestroy() { transfers.close();radios.close();files.shutdownNow();super.onDestroy(); }
+    @Override protected void onDestroy() { if(transfers!=null)transfers.close();if(radios!=null)radios.close();files.shutdownNow();super.onDestroy(); }
 }
