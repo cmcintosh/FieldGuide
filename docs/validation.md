@@ -1,11 +1,13 @@
 # Validation — 22 October 2026
 
-- Python 3.12 / SQLite FTS5: 43 automated tests pass.
-- Tests cover storage/import/backup, live local HTTP and model-client fixture behavior, raster MBTiles row conversion/read-only access, selected peer transfer between independent databases, repeated import, invalid/expired codes and integrity failure.
-- Audio tests cover both generated profiles, UTF-8 budgets, synthetic noise, sample offset, truncation and CRC rejection.
-- Editable installation and wheel build pass; the wheel includes all local UI assets and the GPL license. Source and installed audio CLI commands pass.
-- JavaScript syntax is checked; live DOM rendering was not verified because no local Chromium executable is installed.
-- No model weights, native Android APK, Pi/phone hardware, actual Wi-Fi/Bluetooth radios or speaker/microphone path were tested.
-- GitHub Actions is configured for Python 3.10, 3.12 and 3.13. Local passing tests do not imply that remote CI has completed.
+- Python 3.12 / SQLite FTS5: **50 automated tests pass locally**. The Tests workflow also runs Python 3.10, 3.12 and 3.13.
+- Tests cover storage/import/backup, live local HTTP/model-client fixtures, raster maps, selected peer imports and the experimental audio codec.
+- New FGT1 tests cover a fixed cross-language frame, fragmented reads, protocol/length/digest/truncation rejection, real local TCP delivery/acknowledgement and refusal to overwrite an existing receiver file.
+- A separate CLI smoke test launched the actual one-shot TCP receiver, sent a bundle, and verified the saved bytes and acknowledgement.
+- The Android-independent Java codec passes against the same Python golden frame in GitHub Actions.
+- Android SDK 36 / JDK 17 compilation and lint pass in [verified CI run 39862708435](https://github.com/cmcintosh/FieldGuide/actions/runs/39862708435); a debug APK artifact was generated. Lint is a build gate, not a physical device test.
+- Python 0.3.0 wheel packaging passes and includes the new link module/entry point. JavaScript syntax and local documentation links pass.
+- No model weights, physical Android/Pi radios, phone UI, Bluetooth pairing, Wi-Fi Direct groups, hotspot behavior or speaker/microphone path have been exercised on real hardware here.
+- No complete native Android LLM/maps application is claimed: the native app is a nearby-transfer companion with explicit file handoff.
 
-The model endpoint fixture does not establish inference quality. Generated-WAV round trips do not establish an acoustic link. See the hardware testing wiki page for required next measurements.
+Passing build/lint and byte-level tests does not establish a working physical link, device compatibility or LLM answer quality. The native app must be tested on two phones before publishing a supported-device claim. See the hardware-testing page and Android README.
