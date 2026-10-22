@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fieldguide-offline"
+version = "0.2.0"
+description = "Offline knowledge, local RAG, maps, and explicit peer data exchange"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "GPL-2.0-only"
+license-files = ["LICENSE"]
+authors = [{name = "FieldGuide contributors"}]
+dependencies = []
+
+[project.scripts]
+fieldguide = "fieldguide.server:main"
+fieldguide-audio = "fieldguide.audio:main"
+
+[project.urls]
+Repository = "https://github.com/cmcintosh/FieldGuide"
+Documentation = "https://github.com/cmcintosh/FieldGuide/tree/main/docs/wiki"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+fieldguide = ["static/*"]
